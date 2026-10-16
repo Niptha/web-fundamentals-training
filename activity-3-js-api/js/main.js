@@ -14,12 +14,60 @@ const input = document.querySelector("#search-input");
 //   4. EMPTY:   no products? show a "No products found" message
 //   5. ERROR:   catch the error, show a message and a "Try again" button
 async function load(query = "") {
-  // your code here
+  status.classList.remove("is-error");
+  status.textContent = "Loading products…";
+
+  list.innerHTML = `
+    <li class="skeleton"></li>
+    <li class="skeleton"></li>
+    <li class="skeleton"></li>
+  `;
+
+  try {
+    const data = query
+      ? await searchProducts(query)
+      : await getProducts();
+
+    if (data.products.length === 0) {
+      status.textContent = "No products found.";
+
+      list.innerHTML = `
+        <li class="state">
+          <h3>No products found</h3>
+          <p>Try searching for another product.</p>
+        </li>
+      `;
+      return;
+    }
+
+    list.innerHTML = data.products.map(Card).join("");
+    status.textContent = `${data.products.length} products loaded.`;
+
+  } catch (error) {
+    status.classList.add("is-error");
+    status.textContent = "Unable to load products.";
+
+    list.innerHTML = `
+      <li class="state">
+        <h3>Something went wrong</h3>
+        <p>Please check your connection and try again.</p>
+        <button type="button" class="btn" id="retry-button">
+          Try again
+        </button>
+      </li>
+    `;
+
+    document.querySelector("#retry-button").addEventListener("click", () => {
+      load(query);
+    });
+  }
 }
 
-// TODO 5: on form submit, stop the page reload and call load(input.value.trim())
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  load(input.value.trim());
+});
 
-// Stretch: debounce the "input" event so search runs when typing pauses
 
 document.querySelector("#year").textContent = new Date().getFullYear();
 load();

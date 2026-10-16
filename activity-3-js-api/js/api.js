@@ -8,16 +8,24 @@ const BASE_URL = "https://dummyjson.com";
 //   - if response.ok is false, throw new Error(...)
 //   - return response.json()
 async function getJSON(path) {
-  // your code here
+  const response = await fetch(`${BASE_URL}${path}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  return response.json();
+ 
 }
 
 // TODO 2: GET /products?limit=12
 export function getProducts(limit = 12) {
   // return getJSON(...)
+ return getJSON(`/products?limit=${limit}`);
 }
 
 // TODO 3: GET /products/search?q=<query>
 // Hint: wrap the query in encodeURIComponent()
 export function searchProducts(query) {
-  // return getJSON(...)
+  return getJSON(`/products/search?q=${encodeURIComponent(query)}`);
 }
