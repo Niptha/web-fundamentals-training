@@ -17,13 +17,23 @@ export function router() {
 
   // TODO 1: split the hash into parts.
   //   "#/product/7".split("/")  →  ["#", "product", "7"]
-  const page = "";   // replace me
-  const param = "";  // replace me
+   const parts = hash.split("/");
+  const page = parts[1] || "";
+  const param = parts[2] || "";
 
   // TODO 2: return the right view for each page.
   //   ""        → ListView(app)
   //   "product" → DetailView(app, Number(param))
   //   "about"   → AboutView(app)
   //   otherwise → NotFoundView(app)
-  return ListView(app);
+  if (page === "") {
+    ListView(app);
+  } else if (page === "product" && param !== "") {
+    DetailView(app, Number(param));
+  } else if (page === "about") {
+    AboutView(app);
+  } else {
+    NotFoundView(app);
+  }
 }
+
